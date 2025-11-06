@@ -2,6 +2,7 @@ package com.umg.lrperezc.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Table(name = "client")
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class Client {
 
     @Id
@@ -21,6 +23,9 @@ public class Client {
 
     @Column(name = "last_name", nullable = false, length = 80)
     private String lastName;
+
+    @Column(nullable = false, unique = true, length = 100)
+    private String username;
 
     @Column(nullable = false, unique = true, length = 100)
     private String email;
