@@ -1,5 +1,7 @@
 package com.umg.lrperezc.controller;
 
+import com.umg.lrperezc.dto.CreateClientDTO;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +16,7 @@ public class ClientController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createClient(){
+    public ResponseEntity<String> createClient(@Valid @RequestBody CreateClientDTO createClientDTO){
         return ResponseEntity.ok("ok");
     }
 
