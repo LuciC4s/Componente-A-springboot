@@ -14,6 +14,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import com.umg.lrperezc.OperacionesNegocio;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -49,10 +51,13 @@ public class OrderService {
                     .collect(Collectors.toList());
             order.setItems(items);
 
-            BigDecimal total = items.stream()
+            BigDecimal subtotal = items.stream()
                     .map(OrderItem::getPrice)
                     .filter(p -> p != null)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
+            // Usar ComponenteC para calcular total con IVA
+            double totalConIva = OperacionesNegocio.calcularTotalConIVA(subtotal.doubleValue());
+            BigDecimal total = BigDecimal.valueOf(totalConIva).setScale(2, RoundingMode.HALF_UP);
             order.setTotalAmount(total);
 
             Order saved = orderRepository.save(order);
@@ -86,10 +91,17 @@ public class OrderService {
     }
 
     private OrderResponseDTO toResponse(Order order, boolean recomputeTotal) {
-        BigDecimal total = recomputeTotal ? order.getItems().stream()
-                .map(OrderItem::getPrice)
-                .filter(p -> p != null)
-                .reduce(BigDecimal.ZERO, BigDecimal::add) : order.getTotalAmount();
+        BigDecimal total = null;
+        if (recomputeTotal) {
+            BigDecimal subtotal = order.getItems().stream()
+                    .map(OrderItem::getPrice)
+                    .filter(p -> p != null)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            double totalConIva = OperacionesNegocio.calcularTotalConIVA(subtotal.doubleValue());
+            total = BigDecimal.valueOf(totalConIva).setScale(2, RoundingMode.HALF_UP);
+        } else {
+            total = order.getTotalAmount();
+        }
 
         List<ItemDTO> itemDTOs = order.getItems().stream()
                 .map(i -> new ItemDTO(i.getTitle(), i.getPrice()))
