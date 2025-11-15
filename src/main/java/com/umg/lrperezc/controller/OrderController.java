@@ -36,6 +36,11 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getById(id));
     }
 
+    @GetMapping("/client/{clientId}/pendientes")
+    public ResponseEntity<List<OrderResponseDTO>> getPendingByClient(@PathVariable int clientId) {
+        return ResponseEntity.ok(orderService.listPendingByClient(clientId));
+    }
+
     @ExceptionHandler(OrderNotFoundException.class)
     public ResponseEntity<String> handleNotFound(OrderNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
