@@ -1,0 +1,203 @@
+openapi: 3.0.3
+info:
+  title: Componente A - API
+  version: '1.0.0'
+  description: API REST para gestión de clientes y pedidos
+servers:
+  - url: http://localhost:8080
+paths:
+  /client:
+    get:
+      summary: Listar clientes
+      responses:
+        '200':
+          description: Lista de clientes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+    post:
+      summary: Crear cliente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClientDTO'
+      responses:
+        '200':
+          description: Cliente creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+  /client/{id}:
+    get:
+      summary: Obtener cliente por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Cliente encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '404':
+          description: Cliente no encontrado
+          content:
+            text/plain:
+              schema:
+                type: string
+  /pedidos:
+    get:
+      summary: Listar pedidos
+      responses:
+        '200':
+          description: Lista de pedidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderResponseDTO'
+    post:
+      summary: Crear pedido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderDTO'
+      responses:
+        '201':
+          description: Pedido creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponseDTO'
+        '400':
+          description: Error de validación o creación
+          content:
+            text/plain:
+              schema:
+                type: string
+  /pedidos/{id}:
+    get:
+      summary: Obtener pedido por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pedido encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponseDTO'
+        '404':
+          description: Pedido no encontrado
+          content:
+            text/plain:
+              schema:
+                type: string
+components:
+  schemas:
+    CreateClientDTO:
+      type: object
+      required: [firstName, lastName, username, email]
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+    Client:
+      type: object
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        age:
+          type: integer
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+    ItemDTO:
+      type: object
+      required: [title, price]
+      properties:
+        title:
+          type: string
+        price:
+          type: number
+          format: double
+          minimum: 0
+    CreateOrderDTO:
+      type: object
+      required: [clientId, status, items]
+      properties:
+        clientId:
+          type: integer
+        status:
+          type: string
+          enum: [pagado, pendiente]
+        notes:
+          type: string
+          nullable: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemDTO'
+    OrderResponseDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        clientId:
+          type: integer
+        status:
+          type: string
+        orderDate:
+          type: string
+          format: date-time
+        notes:
+          type: string
+          nullable: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemDTO'
+        total:
+          type: number
+          format: double
+
+
