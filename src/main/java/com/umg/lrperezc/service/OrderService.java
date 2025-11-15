@@ -75,6 +75,14 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    public List<OrderResponseDTO> listPendingByClient(int clientId) {
+        // Asegurar que el cliente existe (lanza 404 si no)
+        clientService.findClientById(clientId);
+        return orderRepository.findByClient_IdAndStatusIgnoreCase(clientId, "pendiente").stream()
+                .map(o -> toResponse(o, false))
+                .collect(Collectors.toList());
+    }
+
     public OrderResponseDTO getById(Integer id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException("Pedido con id " + id + " no encontrado"));
