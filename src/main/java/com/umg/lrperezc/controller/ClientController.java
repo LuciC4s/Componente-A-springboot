@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("client")
 @AllArgsConstructor
@@ -25,5 +27,9 @@ public class ClientController {
         return ResponseEntity.ok().body(clientService.createClient(createClientDTO));
     }
 
+    @GetMapping
+    public ResponseEntity<List> getAllClients(){
+        return ResponseEntity.ok().body(clientService.getAllClients());
+    }
 
 }

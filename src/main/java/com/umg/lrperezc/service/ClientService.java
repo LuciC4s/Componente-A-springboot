@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class ClientService {
@@ -47,5 +49,10 @@ public class ClientService {
         } catch (Exception e) {
             throw new ClientCreationException("Client could not be created", e);
         }
+    }
+
+    public List<Client> getAllClients(){
+        List<Client> allClients = clientRepository.findAll();
+        return allClients;
     }
 }
